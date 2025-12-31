@@ -1,51 +1,54 @@
-import { BlockEntity } from '@logseq/libs/dist/LSPlugin'
 import { Box, Button, Group, Paper, Stack, Text } from '@mantine/core'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { ResultCardProps } from '../interfaces'
+import { ResultCardProps, ResultsEntity } from '../interfaces'
 
-export const ResultCard = ({ block, setResults }: ResultCardProps) => {
+export const ResultCard = ({ result, setResults }: ResultCardProps) => {
   const { control, watch } = useFormContext()
   const searchTerm = watch('searchTerm')
 
-  const onReplace = async (block: any, replaceTerm: string) => {
+  const onReplace = async (result: ResultsEntity, replaceTerm: string) => {
     if (replaceTerm === '') {
       logseq.UI.showMsg('Enter a replace term', 'error')
       return
     }
-    const newContent = block.title.replace(searchTerm, replaceTerm)
-    await logseq.Editor.updateBlock(block.uuid, newContent)
-    setResults((prev) => prev.filter((b) => b.uuid !== block.uuid))
+    const newContent = result.title.replace(searchTerm, replaceTerm)
+    await logseq.Editor.updateBlock(result.uuid, newContent)
+    setResults((prev) => prev.filter((b) => b.uuid !== result.uuid))
   }
 
-  const goToBlock = async (block: BlockEntity) => {
-    const pageName = block?.page?.name
-    if (pageName && block.uuid) {
-      logseq.Editor.scrollToBlockInPage(pageName, block.uuid)
+  const goToResult = async (result: ResultsEntity) => {
+    const pageName = result?.page?.name
+    if (pageName && result.uuid) {
+      logseq.Editor.scrollToBlockInPage(pageName, result.uuid)
     } else {
-      logseq.UI.showMsg('Unable to determine page for this block', 'warning')
+      logseq.UI.showMsg('Unable to determine page for this result', 'error')
     }
   }
 
   return (
-    <Paper key={block.uuid} withBorder p="sm" shadow="xs">
+    <Paper withBorder p="sm" shadow="xs">
       <Stack gap="xs">
         <Group justify="space-between" align="start">
           <Box style={{ flex: 1 }}>
             <Text size="xs" c="dimmed" ff="monospace">
-              {block.uuid}
+              {result.uuid}
             </Text>
             <Text size="sm" lineClamp={3}>
-              {block.title}
+              {result.title}
             </Text>
             <Text size="xs" c="dimmed" mt={4}>
-              Page: [[{block?.page?.name}]]
+              Page: [[{result.page?.name}]]
             </Text>
           </Box>
         </Group>
 
         <Group grow>
-          <Button size="xs" variant="default" onClick={() => goToBlock(block)}>
+          <Button
+            size="xs"
+            variant="default"
+            onClick={() => goToResult(result)}
+          >
             Go to Block
           </Button>
           <Controller
@@ -56,7 +59,7 @@ export const ResultCard = ({ block, setResults }: ResultCardProps) => {
                 size="xs"
                 variant="light"
                 color="blue"
-                onClick={() => onReplace(block, field.value)}
+                onClick={() => onReplace(result, field.value)}
               >
                 Replace
               </Button>

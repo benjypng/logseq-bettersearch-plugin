@@ -1,4 +1,3 @@
-import { BlockEntity } from '@logseq/libs/dist/LSPlugin'
 import { Dispatch, SetStateAction } from 'react'
 
 export interface FormValues {
@@ -6,7 +5,19 @@ export interface FormValues {
   replaceTerm: string
 }
 
+export interface ResultsEntity {
+  content: string
+  ['full-title ']: string
+  page: { name: string }
+  title: string
+  uuid: string
+}
+
 export interface ResultCardProps {
-  block: BlockEntity
-  setResults: Dispatch<SetStateAction<BlockEntity[]>>
+  result: ResultsEntity
+  setResults: Dispatch<SetStateAction<ResultsEntity[]>>
+}
+
+export interface VisibilityProps {
+  visible: boolean
 }

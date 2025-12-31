@@ -1,18 +1,18 @@
-import { BlockEntity } from '@logseq/libs/dist/LSPlugin'
 import { Stack, Text } from '@mantine/core'
 import { useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { FormValues } from '../interfaces'
+import { FormValues, ResultsEntity } from '../interfaces'
 import { ResultCard } from './ResultCard'
 
 export const Results = () => {
-  const [results, setResults] = useState<BlockEntity[]>([])
+  const [results, setResults] = useState<ResultsEntity[]>([])
   const { watch } = useFormContext<FormValues>()
   const searchTerm = watch('searchTerm')
 
   const runQuery = useCallback(async (term: string) => {
-    if (!term) {
+    //TODO: Implement debounce if there is feedback about glitches
+    if (!term || term.length < 3) {
       setResults([])
       return
     }
@@ -47,8 +47,8 @@ export const Results = () => {
         </Text>
       )}
 
-      {results.map((block) => (
-        <ResultCard block={block} setResults={setResults} />
+      {results.map((result) => (
+        <ResultCard key={result.uuid} result={result} setResults={setResults} />
       ))}
     </Stack>
   )
