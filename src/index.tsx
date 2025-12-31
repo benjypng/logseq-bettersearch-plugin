@@ -1,16 +1,43 @@
+import '@mantine/core/styles.css'
 import '@logseq/libs'
 
-import { handlePopup } from './handle-popup'
+import { createRoot } from 'react-dom/client'
+
+import { SearchReplaceContainer } from './components/SearchReplaceContainer'
 import { settings } from './settings'
 
 const main = async () => {
-  console.log('<insert-plugin-name> loaded')
+  logseq.UI.showMsg('logseq-searchreplace-plugin loaded')
 
-  // Used to handle any popups
-  handlePopup()
+  const el = document.getElementById('app')
+  if (!el) return
+  const root = createRoot(el)
 
-  // Check if plugin is being used on the DB version
-  const { supportDb } = await logseq.App.getInfo()
+  root.render(<SearchReplaceContainer />)
+
+  logseq.App.registerCommandPalette(
+    {
+      key: 'logseq-searchreplace-plugin',
+      label: 'Search and Replace',
+      keybinding: {
+        mode: 'global',
+        binding: 'mod+shift+s',
+      },
+    },
+    () => {
+      logseq.setMainUIInlineStyle({
+        position: 'fixed',
+        zIndex: 11,
+        top: 0,
+        right: 0,
+        left: 'auto',
+        width: '33vw',
+        height: '100vh',
+        pointerEvents: 'auto',
+      })
+      logseq.showMainUI()
+    },
+  )
 }
 
 logseq.useSettingsSchema(settings).ready(main).catch(console.error)
