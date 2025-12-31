@@ -8,7 +8,7 @@ export interface FormValues {
 export interface ResultsEntity {
   content: string
   ['full-title ']: string
-  page: { name: string }
+  page: { title: string }
   title: string
   uuid: string
 }

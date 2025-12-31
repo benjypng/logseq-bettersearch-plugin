@@ -18,7 +18,7 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
   }
 
   const goToResult = async (result: ResultsEntity) => {
-    const pageName = result?.page?.name
+    const pageName = result?.page?.title
     if (pageName && result.uuid) {
       logseq.Editor.scrollToBlockInPage(pageName, result.uuid)
     } else {
@@ -38,7 +38,7 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
               {result.title}
             </Text>
             <Text size="xs" c="dimmed" mt={4}>
-              Page: [[{result.page?.name}]]
+              Page: [[{result.page?.title}]]
             </Text>
           </Box>
         </Group>

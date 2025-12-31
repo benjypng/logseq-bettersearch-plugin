@@ -17,7 +17,7 @@ export const Results = () => {
       return
     }
     const query = `
-      [:find (pull ?b [:block/uuid :block/title {:block/page [:block/name]}])
+      [:find (pull ?b [:block/uuid :block/title {:block/page [:block/title]}])
         :where
         [?b :block/title ?content]
         [(clojure.string/includes? ?content "${term}")]]
