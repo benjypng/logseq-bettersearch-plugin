@@ -11,17 +11,17 @@ export const Results = () => {
   const searchTerm = watch('searchTerm')
 
   const runQuery = useCallback(async (term: string) => {
-    //TODO: Implement debounce if there is feedback about glitches
+    //TODO: Implement better debounce if there is feedback about glitches
     if (!term || term.length < 3) {
       setResults([])
       return
     }
     const query = `
-      [:find (pull ?b [:block/uuid :block/title {:block/page [:block/title]}])
+        [:find (pull ?b [:block/uuid :block/title :block/created-at :block/updated-at {:block/page [:block/title]}])
         :where
         [?b :block/title ?content]
-        [(clojure.string/includes? ?content "${term}")]]
-    `
+        [(clojure.string/includes? ?content "${term}")]]`
+
     try {
       const queryResults = await logseq.DB.datascriptQuery(query)
       if (!queryResults) setResults([])
@@ -35,7 +35,7 @@ export const Results = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       runQuery(searchTerm)
-    }, 100)
+    }, 300)
     return () => clearTimeout(timeoutId)
   }, [searchTerm, runQuery])
 
