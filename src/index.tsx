@@ -24,18 +24,16 @@ const main = async () => {
         binding: 'mod+shift+s',
       },
     },
-    () => {
+    async () => {
       logseq.setMainUIInlineStyle({
         position: 'fixed',
         zIndex: 11,
         top: 0,
         right: 0,
         left: 'auto',
-        width: '33vw',
-        height: '100vh',
-        pointerEvents: 'auto',
+        width: '280px',
       })
-      logseq.showMainUI()
+      logseq.toggleMainUI()
     },
   )
 }

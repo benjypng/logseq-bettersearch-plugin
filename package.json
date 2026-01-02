@@ -1,19 +1,20 @@
 {
-  "name": "logseq-searchreplace-plugin",
+  "name": "logseq-bettersearch-plugin",
   "author": "",
   "description": "",
   "license": "MIT",
   "logseq": {
-    "id": "logseq-searchreplace-plugin",
-    "title": "logseq-searchreplace-plugin",
+    "id": "logseq-bettersearch-plugin",
+    "title": "logseq-bettersearch-plugin",
     "icon": "./icon.svg",
     "main": "dist/index.html"
   },
   "scripts": {
     "dev": "bunx vite",
-    "build": "bunx eslint . --fix && bunx tsc && bunx vite build",
-    "preview": "bunx vite preview",
-    "prepare": "husky"
+    "build": "bunx vite build",
+    "build:plugin": "bunx eslint . --fix && bunx tsc && bunx vite build",
+    "prepare": "husky",
+    "lint:precommit": "echo \"Running eslint\" && bunx eslint . --fix && echo \"Running tsc\" && tsc && echo \"Running build\" && bun run build"
   },
   "release": {
     "branches": [
@@ -24,7 +25,7 @@
         "@semantic-release/github",
         {
           "assets": [
-            "logseq-searchreplace-plugin.zip"
+            "logseq-bettersearch-plugin.zip"
           ]
         }
       ]

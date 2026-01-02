@@ -29,6 +29,10 @@ export const SearchReplaceContainer = () => {
     color: themeMode === 'dark' ? '#9ca3af' : '#4b5563',
     boxShadow: themeMode === 'dark' ? 'none' : '-2px 0 10px rgba(0,0,0,0.1)',
     borderLeft: `1px solid ${themeMode === 'dark' ? '#374151' : '#d1d5db'}`,
+    minHeight: '100vh',
+    height: 'auto',
+    pointerEvents: 'auto',
+    overflowY: 'auto',
   }
 
   return (
