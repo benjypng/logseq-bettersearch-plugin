@@ -3,7 +3,7 @@ import { CSSProperties, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { FormValues } from '../interfaces'
-import { FormFields, Results, SortButton, TitleHeader } from '.'
+import { FormFields, Results, TitleHeader } from '.'
 
 export const SearchReplaceContainer = () => {
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light')
@@ -47,7 +47,6 @@ export const SearchReplaceContainer = () => {
       >
         <TitleHeader />
         <FormProvider {...formMethods}>
-          <SortButton />
           <FormFields />
           <Results />
         </FormProvider>

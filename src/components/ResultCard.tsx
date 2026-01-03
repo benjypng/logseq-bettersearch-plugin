@@ -22,7 +22,7 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
     if (pageName && result.uuid) {
       logseq.Editor.scrollToBlockInPage(pageName, result.uuid)
     } else {
-      logseq.UI.showMsg('Unable to determine page for this result', 'error')
+      logseq.App.pushState('page', { name: result.title })
     }
   }
 
@@ -38,7 +38,9 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
               {result.title}
             </Text>
             <Text size="xs" c="dimmed" mt={4}>
-              Page: [[{result.page?.title}]]
+              {result.page?.title
+                ? `Page: ${result.page?.title}`
+                : `This is a Page`}
             </Text>
           </Box>
         </Group>

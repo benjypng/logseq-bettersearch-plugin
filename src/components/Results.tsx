@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form'
 
 import { FormValues, ResultsEntity } from '../interfaces'
 import { getFirstWord } from '../utils'
-import { ResultCard } from './ResultCard'
+import { ResultCard, SortButton } from '.'
 
 export const Results = () => {
   const [allBlocks, setAllBlocks] = useState<ResultsEntity[]>([])
@@ -95,13 +95,18 @@ export const Results = () => {
         </Text>
       )}
 
-      {displayResults.slice(0, 50).map((result) => (
-        <ResultCard
-          key={result.uuid}
-          result={result}
-          setResults={() => handleRemove(result.uuid)}
-        />
-      ))}
+      {displayResults.length > 0 && (
+        <>
+          <SortButton />
+          {displayResults.slice(0, 50).map((result) => (
+            <ResultCard
+              key={result.uuid}
+              result={result}
+              setResults={() => handleRemove(result.uuid)}
+            />
+          ))}
+        </>
+      )}
     </Stack>
   )
 }

@@ -31,7 +31,7 @@ const main = async () => {
         top: 0,
         left: 0,
         right: 'auto',
-        width: '300px',
+        width: '30rem',
       })
       logseq.toggleMainUI()
     },
