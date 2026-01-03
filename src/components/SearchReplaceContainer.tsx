@@ -1,9 +1,9 @@
-import { Flex, MantineProvider } from '@mantine/core'
-import React, { CSSProperties, useEffect, useState } from 'react'
+import { Flex, Group, MantineProvider } from '@mantine/core'
+import { CSSProperties, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { FormValues } from '../interfaces'
-import { FormFields, Results, TitleHeader } from '.'
+import { FormFields, Results, SortButton, TitleHeader } from '.'
 
 export const SearchReplaceContainer = () => {
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light')
@@ -39,6 +39,7 @@ export const SearchReplaceContainer = () => {
     <MantineProvider>
       <Flex
         p={'md'}
+        pt={'2.5rem'}
         w={'100%'}
         h={'100vh'}
         direction={'column'}
@@ -46,6 +47,7 @@ export const SearchReplaceContainer = () => {
       >
         <TitleHeader />
         <FormProvider {...formMethods}>
+          <SortButton />
           <FormFields />
           <Results />
         </FormProvider>

@@ -8,6 +8,7 @@ import { settings } from './settings'
 
 const main = async () => {
   logseq.UI.showMsg('logseq-searchreplace-plugin loaded')
+  console.log('plugin loaded')
 
   const el = document.getElementById('app')
   if (!el) return
@@ -29,9 +30,9 @@ const main = async () => {
         position: 'fixed',
         zIndex: 11,
         top: 0,
-        right: 0,
-        left: 'auto',
-        width: '280px',
+        left: 0,
+        right: 'auto',
+        width: '300px',
       })
       logseq.toggleMainUI()
     },

@@ -1,19 +1,21 @@
 import { Stack, Text } from '@mantine/core'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { FormValues, ResultsEntity } from '../interfaces'
+import { getFirstWord } from '../utils'
 import { ResultCard } from './ResultCard'
 
 export const Results = () => {
-  const [results, setResults] = useState<ResultsEntity[]>([])
+  const [rawResults, setRawResults] = useState<ResultsEntity[]>([])
+
   const { watch } = useFormContext<FormValues>()
   const searchTerm = watch('searchTerm')
+  const sortBy = watch('sortBy')
 
   const runQuery = useCallback(async (term: string) => {
-    //TODO: Implement better debounce if there is feedback about glitches
     if (!term || term.length < 3) {
-      setResults([])
+      setRawResults([])
       return
     }
     const query = `
@@ -21,17 +23,15 @@ export const Results = () => {
         :where
         [?b :block/title ?content]
         [(clojure.string/includes? ?content "${term}")]]`
-
     try {
       const queryResults = await logseq.DB.datascriptQuery(query)
-      if (!queryResults) setResults([])
-      setResults(queryResults.flat())
+      setRawResults(queryResults ? queryResults.flat() : [])
     } catch (e) {
       console.error('Search failed:', e)
+      setRawResults([])
     }
   }, [])
 
-  // Refresh results when a replacement happens
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       runQuery(searchTerm)
@@ -39,16 +39,44 @@ export const Results = () => {
     return () => clearTimeout(timeoutId)
   }, [searchTerm, runQuery])
 
+  const sortedResults = useMemo(() => {
+    if (!rawResults.length) return []
+
+    return [...rawResults].sort((a, b) => {
+      switch (sortBy) {
+        case 'updated-at':
+          return b['updated-at'] - a['updated-at']
+        case 'created-at':
+          return b['created-at'] - a['created-at']
+        case 'page-title': {
+          const titleA = getFirstWord(a.page.title)
+          const titleB = getFirstWord(b.page.title)
+          return titleA.localeCompare(titleB)
+        }
+        case 'block-content': {
+          const blockA = getFirstWord(a.title)
+          const blockB = getFirstWord(b.title)
+          return blockA.localeCompare(blockB)
+        }
+        default:
+          return 0
+      }
+    })
+  }, [rawResults, sortBy])
+
   return (
     <Stack gap="xs">
-      {results.length === 0 && searchTerm && (
+      {sortedResults.length === 0 && searchTerm && searchTerm.length >= 3 && (
         <Text c="dimmed" size="sm">
           No matches found.
         </Text>
       )}
-
-      {results.map((result) => (
-        <ResultCard key={result.uuid} result={result} setResults={setResults} />
+      {sortedResults.map((result) => (
+        <ResultCard
+          key={result.uuid}
+          result={result}
+          setResults={setRawResults}
+        />
       ))}
     </Stack>
   )

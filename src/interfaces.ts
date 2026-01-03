@@ -1,15 +1,24 @@
 import { Dispatch, SetStateAction } from 'react'
 
+export type SortByValues =
+  | 'updated-at'
+  | 'created-at'
+  | 'page-title'
+  | 'block-content'
+
 export interface FormValues {
   searchTerm: string
   replaceTerm: string
+  sortBy: SortByValues
 }
 
 export interface ResultsEntity {
   content: string
+  ['created-at']: number
   ['full-title ']: string
   page: { title: string }
   title: string
+  ['updated-at']: number
   uuid: string
 }
 

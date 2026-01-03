@@ -1,4 +1,5 @@
 export * from './FormFields'
 export * from './ResultCard'
 export * from './Results'
+export * from './SortButton'
 export * from './TitleHeader'
