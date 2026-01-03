@@ -7,8 +7,6 @@ import { SearchReplaceContainer } from './components/SearchReplaceContainer'
 import { settings } from './settings'
 
 const main = async () => {
-  logseq.UI.showMsg('logseq-bettersearch-plugin loaded')
-
   const el = document.getElementById('app')
   if (!el) return
   const root = createRoot(el)
@@ -36,6 +34,11 @@ const main = async () => {
       logseq.toggleMainUI()
     },
   )
+
+  // Fallback in case it takes a while for everything to be initialised before plugin can be used
+  setTimeout(() => {
+    logseq.UI.showMsg('logseq-bettersearch-plugin loaded')
+  }, 1000 * 10)
 }
 
 logseq.useSettingsSchema(settings).ready(main).catch(console.error)
