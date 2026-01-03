@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
 
 export type SortByValues =
-  | 'recommended'
+  | 'relevance'
   | 'updated-at'
   | 'created-at'
   | 'page-title'

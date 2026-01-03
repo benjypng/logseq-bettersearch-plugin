@@ -1,16 +1,16 @@
 # logseq-searchreplace-plugin
 ![Version](https://img.shields.io/github/v/release/benjypng/logseq-searchreplace-plugin?style=flat-square&color=0969da) ![Downloads](https://img.shields.io/github/downloads/benjypng/logseq-searchreplace-plugin/total?style=flat-square&color=orange) ![License](https://img.shields.io/github/license/benjypng/logseq-searchreplace-plugin?style=flat-square)
 
-> A powerful, sidecar-style search and replace utility for Logseq.
+> A powerful, sidecar-style fuzzy search and replace utility for Logseq.
 
 ---
 
 ## ✨ Features
-* **Global Search:** Quickly find text across your entire graph (blocks and titles).
+* **Fuzzy Search:** Powered by **Fuse.js**, allowing you to find blocks and titles even with partial or approximate matches.
+* **Scope Control:** Toggle search scope between the **Current Page** and the **Entire Graph**.
+* **Granular Sorting:** Sort results by Relevance, Updated Date, Created Date, Page Title, or Content.
 * **Live Replace:** Perform search-and-replace operations directly from the sidebar.
-* **Sidecar UI:** Non-blocking interface that occupies the right 1/3 of the screen, allowing simultaneous interaction with your graph.
 * **Context Aware:** Jump directly to any block result with a single click.
-* **Theme Adaptive:** Automatically switches between Light and Dark mode to match your Logseq theme.
 
 ## 📸 Screenshots / Demo
 To be added.
@@ -24,14 +24,19 @@ To be added.
 ## 🛠 Usage & Settings
 
 #### Opening the Plugin
-1. Trigger the command palette (`Mod+Shift+p`) and use the command `Search and Replace`.
+1. Trigger the command palette (`Mod+Shift+p`) and use the command `Better Search: Open`.
 2. You can also use the shortcut `mod+shift+s`.
-3. The plugin will open as a dedicated sidebar on the right side of your screen.
+3. The plugin will open as a dedicated sidebar on the left side of your screen.
 
-#### Searching
-1. Type your query into the **Search** field.
-2. Results will appear instantly below.
-3. Click **Go to Block** to scroll the main Logseq window to that specific block.
+#### Searching & Filtering
+1. Type your query into the **Search** field. 
+2. **Toggle Scope:** Click the **File Icon** button to restrict the search to the current page (Blue) or the entire graph (Gray).
+3. **Sort Results:** Click the **Sort** button to cycle through:
+    * Relevance
+    * Updated At
+    * Created At
+    * Page Title
+    * Block Content
 
 #### Replacing Text
 1. Enter the replacement text in the **Replace with** field.

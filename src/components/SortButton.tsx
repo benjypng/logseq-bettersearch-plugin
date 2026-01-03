@@ -3,7 +3,7 @@ import {
   IconCalendar,
   IconClock,
   IconFileText,
-  IconSortAscending,
+  IconSortDescending,
 } from '@tabler/icons-react'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -14,8 +14,8 @@ export const SortButton = ({ disabled }: SortButtonProps) => {
 
   const getLabel = (value: SortByValues) => {
     switch (value) {
-      case 'recommended':
-        return 'Recommended'
+      case 'relevance':
+        return 'Relevance'
       case 'created-at':
         return 'Created At'
       case 'page-title':
@@ -31,7 +31,7 @@ export const SortButton = ({ disabled }: SortButtonProps) => {
     <Controller
       name="sortBy"
       control={control}
-      defaultValue="recommended"
+      defaultValue="relevance"
       render={({ field }) => (
         <Menu shadow="md" width={200}>
           <Menu.Target>
@@ -40,7 +40,7 @@ export const SortButton = ({ disabled }: SortButtonProps) => {
               variant="default"
               size="xs"
               leftSection={
-                <IconSortAscending
+                <IconSortDescending
                   style={{ width: rem(14), height: rem(14) }}
                 />
               }
@@ -55,7 +55,7 @@ export const SortButton = ({ disabled }: SortButtonProps) => {
               leftSection={
                 <IconClock style={{ width: rem(14), height: rem(14) }} />
               }
-              onClick={() => field.onChange('recommended')}
+              onClick={() => field.onChange('relevance')}
             >
               Recommended
             </Menu.Item>

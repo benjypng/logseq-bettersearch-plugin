@@ -18,7 +18,7 @@ const main = async () => {
   logseq.App.registerCommandPalette(
     {
       key: 'logseq-searchreplace-plugin',
-      label: 'Search and Replace',
+      label: 'Better Search: Open',
       keybinding: {
         mode: 'global',
         binding: 'mod+shift+s',
