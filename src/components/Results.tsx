@@ -1,5 +1,6 @@
-import { Stack, Text } from '@mantine/core'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Center, Loader, Stack, Text } from '@mantine/core'
+import Fuse from 'fuse.js'
+import { useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { FormValues, ResultsEntity } from '../interfaces'
@@ -7,75 +8,98 @@ import { getFirstWord } from '../utils'
 import { ResultCard } from './ResultCard'
 
 export const Results = () => {
-  const [rawResults, setRawResults] = useState<ResultsEntity[]>([])
+  const [allBlocks, setAllBlocks] = useState<ResultsEntity[]>([])
+  const [filteredResults, setFilteredResults] = useState<ResultsEntity[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const { watch } = useFormContext<FormValues>()
   const searchTerm = watch('searchTerm')
   const sortBy = watch('sortBy')
 
-  const runQuery = useCallback(async (term: string) => {
-    if (!term || term.length < 3) {
-      setRawResults([])
-      return
-    }
-    const query = `
+  useEffect(() => {
+    const fetchAllBlocks = async () => {
+      setIsLoading(true)
+      const query = `
         [:find (pull ?b [:block/uuid :block/title :block/created-at :block/updated-at {:block/page [:block/title]}])
         :where
         [?b :block/title ?content]
-        [(clojure.string/includes? ?content "${term}")]]`
-    try {
-      const queryResults = await logseq.DB.datascriptQuery(query)
-      setRawResults(queryResults ? queryResults.flat() : [])
-    } catch (e) {
-      console.error('Search failed:', e)
-      setRawResults([])
+       ]`
+      try {
+        const res = await logseq.DB.datascriptQuery(query)
+        setAllBlocks(res ? res.flat() : [])
+      } catch (e: any) {
+        console.error('Indexing failed:', e)
+        logseq.UI.showMsg('Indexing failed', String(e.message))
+      } finally {
+        setIsLoading(false)
+      }
     }
+    fetchAllBlocks()
   }, [])
 
+  const fuse = useMemo(() => {
+    return new Fuse(allBlocks, {
+      keys: ['title', 'page.title'],
+      threshold: 0.4,
+      ignoreLocation: true,
+    })
+  }, [allBlocks])
+
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      runQuery(searchTerm)
-    }, 300)
-    return () => clearTimeout(timeoutId)
-  }, [searchTerm, runQuery])
+    if (!searchTerm || searchTerm.length < 3) {
+      setFilteredResults([])
+      return
+    }
+    const fuseResult = fuse.search(searchTerm)
+    const results = fuseResult.map((r) => r.item)
+    setFilteredResults(results)
+  }, [searchTerm, fuse])
 
-  const sortedResults = useMemo(() => {
-    if (!rawResults.length) return []
-
-    return [...rawResults].sort((a, b) => {
+  const displayResults = useMemo(() => {
+    if (!filteredResults.length) return []
+    return [...filteredResults].sort((a, b) => {
       switch (sortBy) {
         case 'updated-at':
           return b['updated-at'] - a['updated-at']
         case 'created-at':
           return b['created-at'] - a['created-at']
-        case 'page-title': {
-          const titleA = getFirstWord(a.page.title)
-          const titleB = getFirstWord(b.page.title)
-          return titleA.localeCompare(titleB)
-        }
-        case 'block-content': {
-          const blockA = getFirstWord(a.title)
-          const blockB = getFirstWord(b.title)
-          return blockA.localeCompare(blockB)
-        }
+        case 'page-title':
+          return getFirstWord(a.page?.title || '').localeCompare(
+            getFirstWord(b.page?.title || ''),
+          )
+        case 'block-content':
+          return getFirstWord(a.title || '').localeCompare(
+            getFirstWord(b.title || ''),
+          )
         default:
           return 0
       }
     })
-  }, [rawResults, sortBy])
+  }, [filteredResults, sortBy])
+
+  const handleRemove = (uuid: string) => {
+    setFilteredResults((prev) => prev.filter((b) => b.uuid !== uuid))
+  }
 
   return (
     <Stack gap="xs">
-      {sortedResults.length === 0 && searchTerm && searchTerm.length >= 3 && (
+      {isLoading && (
+        <Center p="xl">
+          <Loader size="sm" />
+        </Center>
+      )}
+
+      {!isLoading && displayResults.length === 0 && searchTerm.length >= 3 && (
         <Text c="dimmed" size="sm">
           No matches found.
         </Text>
       )}
-      {sortedResults.map((result) => (
+
+      {displayResults.slice(0, 50).map((result) => (
         <ResultCard
           key={result.uuid}
           result={result}
-          setResults={setRawResults}
+          setResults={() => handleRemove(result.uuid)}
         />
       ))}
     </Stack>

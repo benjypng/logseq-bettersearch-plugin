@@ -8,7 +8,6 @@ import { settings } from './settings'
 
 const main = async () => {
   logseq.UI.showMsg('logseq-searchreplace-plugin loaded')
-  console.log('plugin loaded')
 
   const el = document.getElementById('app')
   if (!el) return
