@@ -17,7 +17,7 @@ export interface FormValues {
 export interface ResultsEntity {
   content: string
   ['created-at']: number
-  ['full-title ']: string
+  ['full-title']: string
   page: { title: string }
   title: string
   ['updated-at']: number
