@@ -31,7 +31,7 @@ To be added.
 #### Searching & Filtering
 1. Type your query into the **Search** field. 
 2. **Toggle Scope:** Click the **File Icon** button to restrict the search to the current page (Blue) or the entire graph (Gray).
-3. **Sort Results:** Click the **Sort** button to cycle through:
+3. **Sort Results:** Click the **Sort** button to sort in descending order:
     * Relevance
     * Updated At
     * Created At
