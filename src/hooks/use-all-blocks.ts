@@ -22,6 +22,7 @@ export const useAllBlocks = () => {
       console.error('[BetterSearch] Indexing failed:', e)
     } finally {
       const endTime = performance.now()
+
       console.info(
         `%c%s %c[BetterSearch] Indexing took ${(endTime - startTime).toFixed(2)}ms`,
         'background:#000;color:#fff;padding:2px 6px;border-radius:4px;font-weight:600;',

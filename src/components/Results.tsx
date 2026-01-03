@@ -23,11 +23,23 @@ export const Results = () => {
 
   const [filteredResults, setFilteredResults] = useState<ResultsEntity[]>([])
   const [currentPageTitle, setCurrentPageTitle] = useState<string | null>()
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
 
   const { watch } = useFormContext<FormValues>()
   const searchTerm = watch('searchTerm')
   const sortBy = watch('sortBy')
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 500)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [searchTerm])
 
   const fuse = useMemo(() => {
     return new Fuse(allBlocks, {
@@ -45,17 +57,20 @@ export const Results = () => {
   }, [allBlocks])
 
   useEffect(() => {
-    setIsLoading(true)
-    if (!searchTerm || searchTerm.length < 3) {
+    if (!debouncedSearchTerm || debouncedSearchTerm.length < 3) {
       setFilteredResults([])
       setIsLoading(false)
       return
     }
-    const fuseResult = fuse.search(searchTerm)
-    const results = fuseResult.map((r) => r.item)
-    setFilteredResults(results)
-    setIsLoading(false)
-  }, [searchTerm, fuse])
+    setIsLoading(true)
+    const performSearch = async () => {
+      const fuseResult = fuse.search(debouncedSearchTerm)
+      const results = fuseResult.map((r) => r.item)
+      setFilteredResults(results)
+      setIsLoading(false)
+    }
+    performSearch()
+  }, [debouncedSearchTerm, fuse])
 
   const displayResults = useMemo(() => {
     if (!filteredResults.length) return []
@@ -129,7 +144,7 @@ export const Results = () => {
         </Tooltip>
       </Group>
 
-      {!isLoading && searchTerm.length >= 3 && (
+      {!isLoading && debouncedSearchTerm.length >= 3 && (
         <>
           {displayResults.length === 0 && (
             <Text c="dimmed" size="sm">

@@ -35,7 +35,7 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
               {result.uuid}
             </Text>
             <Text size="sm" lineClamp={3}>
-              {result.title}
+              {result['full-title']}
             </Text>
             <Text size="xs" c="dimmed" mt={4}>
               {result.page?.title
