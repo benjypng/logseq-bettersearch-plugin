@@ -129,10 +129,19 @@ export const Results = () => {
         </Tooltip>
       </Group>
 
-      {!isLoading && displayResults.length === 0 && searchTerm.length >= 3 && (
-        <Text c="dimmed" size="sm">
-          No matches found.
-        </Text>
+      {!isLoading && searchTerm.length >= 3 && (
+        <>
+          {displayResults.length === 0 && (
+            <Text c="dimmed" size="sm">
+              No matches found.
+            </Text>
+          )}
+          {displayResults.length > 0 && (
+            <Text c="dimmed" size="sm">
+              {displayResults.length} matches found.
+            </Text>
+          )}
+        </>
       )}
 
       {displayResults.length > 0 && (
