@@ -1,4 +1,4 @@
-import { Flex, Group, MantineProvider } from '@mantine/core'
+import { Flex, MantineProvider } from '@mantine/core'
 import { CSSProperties, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
