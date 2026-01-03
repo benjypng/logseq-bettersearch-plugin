@@ -31,6 +31,7 @@ export const FormFields = () => {
           <TextInput
             autoFocus
             label="Search"
+            description="Operators: ' (exact), ^ (start), ! (not) | Example: ^Apple"
             placeholder="Type to search..."
             {...field}
           />

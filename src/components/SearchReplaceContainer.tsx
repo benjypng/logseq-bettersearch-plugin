@@ -1,5 +1,5 @@
 import { Flex, MantineProvider } from '@mantine/core'
-import { CSSProperties, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { FormValues } from '../interfaces'
@@ -24,26 +24,23 @@ export const SearchReplaceContainer = () => {
     }
   }, [])
 
-  const containerStyle: CSSProperties = {
-    backgroundColor: themeMode === 'dark' ? '#1f2937' : '#e5e7eb',
-    color: themeMode === 'dark' ? '#9ca3af' : '#4b5563',
-    boxShadow: themeMode === 'dark' ? 'none' : '-2px 0 10px rgba(0,0,0,0.1)',
-    borderLeft: `1px solid ${themeMode === 'dark' ? '#374151' : '#d1d5db'}`,
-    minHeight: '100vh',
-    height: 'auto',
-    pointerEvents: 'auto',
-    overflowY: 'auto',
-  }
-
   return (
     <MantineProvider>
       <Flex
-        p={'md'}
-        pt={'2.5rem'}
-        w={'100%'}
-        h={'100vh'}
-        direction={'column'}
-        style={containerStyle}
+        p="md"
+        pt="2.5rem"
+        w="100%"
+        h="100vh"
+        mih="100vh"
+        direction="column"
+        bg={themeMode === 'dark' ? '#1f2937' : '#e5e7eb'}
+        c={themeMode === 'dark' ? '#9ca3af' : '#4b5563'}
+        bdrs={'5px solid red'}
+        style={{
+          boxShadow:
+            themeMode === 'dark' ? 'none' : '4px 0 8px -2px rgba(0,0,0,0.1)',
+          overflowY: 'auto',
+        }}
       >
         <TitleHeader />
         <FormProvider {...formMethods}>

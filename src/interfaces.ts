@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
 
 export type SortByValues =
+  | 'recommended'
   | 'updated-at'
   | 'created-at'
   | 'page-title'
@@ -10,6 +11,7 @@ export interface FormValues {
   searchTerm: string
   replaceTerm: string
   sortBy: SortByValues
+  filterOnlyCurrentPage: boolean
 }
 
 export interface ResultsEntity {
@@ -29,4 +31,8 @@ export interface ResultCardProps {
 
 export interface VisibilityProps {
   visible: boolean
+}
+
+export interface SortButtonProps {
+  disabled: boolean
 }

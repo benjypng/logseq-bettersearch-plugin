@@ -3,12 +3,14 @@ import Fuse from 'fuse.js'
 import { useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
+import { useAllBlocks } from '../hooks'
 import { FormValues, ResultsEntity } from '../interfaces'
 import { getFirstWord } from '../utils'
 import { ResultCard, SortButton } from '.'
 
 export const Results = () => {
-  const [allBlocks, setAllBlocks] = useState<ResultsEntity[]>([])
+  const { allBlocks } = useAllBlocks()
+
   const [filteredResults, setFilteredResults] = useState<ResultsEntity[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -16,53 +18,43 @@ export const Results = () => {
   const searchTerm = watch('searchTerm')
   const sortBy = watch('sortBy')
 
-  useEffect(() => {
-    const fetchAllBlocks = async () => {
-      setIsLoading(true)
-      const query = `
-        [:find (pull ?b [:block/uuid :block/title :block/created-at :block/updated-at {:block/page [:block/title]}])
-        :where
-        [?b :block/title ?content]
-       ]`
-      try {
-        const res = await logseq.DB.datascriptQuery(query)
-        setAllBlocks(res ? res.flat() : [])
-      } catch (e: any) {
-        console.error('Indexing failed:', e)
-        logseq.UI.showMsg('Indexing failed', String(e.message))
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    fetchAllBlocks()
-  }, [])
-
   const fuse = useMemo(() => {
     return new Fuse(allBlocks, {
-      keys: ['title', 'page.title'],
-      threshold: 0.4,
+      keys: [
+        { name: 'title', weight: 2 },
+        {
+          name: 'page.title',
+          weight: 1,
+        },
+      ],
+      threshold: 0.3,
+      useExtendedSearch: true,
       ignoreLocation: true,
     })
   }, [allBlocks])
 
   useEffect(() => {
+    setIsLoading(true)
     if (!searchTerm || searchTerm.length < 3) {
       setFilteredResults([])
+      setIsLoading(false)
       return
     }
     const fuseResult = fuse.search(searchTerm)
     const results = fuseResult.map((r) => r.item)
     setFilteredResults(results)
+    setIsLoading(false)
   }, [searchTerm, fuse])
 
   const displayResults = useMemo(() => {
     if (!filteredResults.length) return []
+
     return [...filteredResults].sort((a, b) => {
       switch (sortBy) {
         case 'updated-at':
-          return b['updated-at'] - a['updated-at']
+          return (b['updated-at'] || 0) - (a['updated-at'] || 0)
         case 'created-at':
-          return b['created-at'] - a['created-at']
+          return (b['created-at'] || 0) - (a['created-at'] || 0)
         case 'page-title':
           return getFirstWord(a.page?.title || '').localeCompare(
             getFirstWord(b.page?.title || ''),
@@ -71,7 +63,7 @@ export const Results = () => {
           return getFirstWord(a.title || '').localeCompare(
             getFirstWord(b.title || ''),
           )
-        default:
+        default: // 'recommended'
           return 0
       }
     })
@@ -95,9 +87,9 @@ export const Results = () => {
         </Text>
       )}
 
+      <SortButton disabled={displayResults.length === 0} />
       {displayResults.length > 0 && (
         <>
-          <SortButton />
           {displayResults.slice(0, 50).map((result) => (
             <ResultCard
               key={result.uuid}

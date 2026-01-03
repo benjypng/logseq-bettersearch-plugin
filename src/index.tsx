@@ -7,7 +7,7 @@ import { SearchReplaceContainer } from './components/SearchReplaceContainer'
 import { settings } from './settings'
 
 const main = async () => {
-  logseq.UI.showMsg('logseq-searchreplace-plugin loaded')
+  logseq.UI.showMsg('logseq-bettersearch-plugin loaded')
 
   const el = document.getElementById('app')
   if (!el) return
@@ -31,7 +31,7 @@ const main = async () => {
         top: 0,
         left: 0,
         right: 'auto',
-        width: '30rem',
+        width: '20rem',
       })
       logseq.toggleMainUI()
     },
