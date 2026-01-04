@@ -9,11 +9,10 @@ import {
   Tooltip,
 } from '@mantine/core'
 import { IconFileText } from '@tabler/icons-react'
-import Fuse from 'fuse.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { useAllBlocks } from '../hooks'
+import { useAllBlocks, useWorkerSearch } from '../hooks'
 import { FormValues, ResultsEntity } from '../interfaces'
 import { getFirstWord } from '../utils'
 import { ResultCard, SortButton } from '.'
@@ -21,10 +20,14 @@ import { ResultCard, SortButton } from '.'
 export const Results = () => {
   const { allBlocks } = useAllBlocks()
 
-  const [filteredResults, setFilteredResults] = useState<ResultsEntity[]>([])
-  const [currentPageTitle, setCurrentPageTitle] = useState<string | null>()
-  const [isLoading, setIsLoading] = useState(false)
+  const {
+    search,
+    results: workerResults,
+    isSearching,
+  } = useWorkerSearch(allBlocks)
 
+  const [localResults, setLocalResults] = useState<ResultsEntity[]>([])
+  const [currentPageTitle, setCurrentPageTitle] = useState<string | null>(null)
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
 
   const { watch } = useFormContext<FormValues>()
@@ -34,54 +37,31 @@ export const Results = () => {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm)
-    }, 500)
-
-    return () => {
-      clearTimeout(handler)
-    }
+    }, 300)
+    return () => clearTimeout(handler)
   }, [searchTerm])
 
-  const fuse = useMemo(() => {
-    return new Fuse(allBlocks, {
-      keys: [
-        { name: 'title', weight: 2 },
-        {
-          name: 'page.title',
-          weight: 1,
-        },
-      ],
-      threshold: 0.3,
-      useExtendedSearch: true,
-      ignoreLocation: true,
-    })
-  }, [allBlocks])
+  useEffect(() => {
+    if (debouncedSearchTerm.length >= 3) {
+      search(debouncedSearchTerm)
+    } else {
+      setLocalResults([])
+    }
+  }, [debouncedSearchTerm, search])
 
   useEffect(() => {
-    if (!debouncedSearchTerm || debouncedSearchTerm.length < 3) {
-      setFilteredResults([])
-      setIsLoading(false)
-      return
-    }
-    setIsLoading(true)
-    const performSearch = async () => {
-      const fuseResult = fuse.search(debouncedSearchTerm)
-      const results = fuseResult.map((r) => r.item)
-      setFilteredResults(results)
-      setIsLoading(false)
-    }
-    performSearch()
-  }, [debouncedSearchTerm, fuse])
+    setLocalResults(workerResults)
+  }, [workerResults])
 
   const displayResults = useMemo(() => {
-    if (!filteredResults.length) return []
+    if (!localResults.length) return []
 
-    return [...filteredResults]
+    return [...localResults]
       .filter((result) => {
         if (currentPageTitle) {
           return result.page.title === currentPageTitle
         } else {
-          setCurrentPageTitle(null)
-          return result
+          return true
         }
       })
       .sort((a, b) => {
@@ -98,21 +78,22 @@ export const Results = () => {
             return getFirstWord(a.title || '').localeCompare(
               getFirstWord(b.title || ''),
             )
-          default: // 'recommended'
+          default: // 'recommended' - preserves the Fuse.js relevance score order
             return 0
         }
       })
-  }, [filteredResults, sortBy, currentPageTitle])
+  }, [localResults, sortBy, currentPageTitle])
 
   const handleRemove = (uuid: string) => {
-    setFilteredResults((prev) => prev.filter((b) => b.uuid !== uuid))
+    setLocalResults((prev) => prev.filter((b) => b.uuid !== uuid))
   }
 
   const onlyCurrentPage = useCallback(async () => {
     const page = await logseq.Editor.getCurrentPage()
-    if (!page) {
+    if (!page || !page.title) {
       setCurrentPageTitle(null)
     } else {
+      // Toggle off if already selected
       if (page.title === currentPageTitle) {
         setCurrentPageTitle(null)
       } else {
@@ -123,9 +104,15 @@ export const Results = () => {
 
   return (
     <Stack gap="xs">
-      {isLoading && (
+      {isSearching && (
         <Center p="xl">
-          <Loader size="sm" />
+          <Stack>
+            <Loader size="sm" />
+            <Text size="sm">
+              Searching takes longer if you have long blocks (more than 500
+              words per block)
+            </Text>
+          </Stack>
         </Center>
       )}
 
@@ -133,7 +120,7 @@ export const Results = () => {
         <SortButton disabled={displayResults.length === 0} />
         <Tooltip label="Click again to reset" disabled={!currentPageTitle}>
           <Button
-            disabled={filteredResults.length === 0}
+            disabled={localResults.length === 0}
             size="xs"
             variant={currentPageTitle ? 'light' : 'default'}
             color={currentPageTitle ? 'blue' : 'gray'}
@@ -144,7 +131,7 @@ export const Results = () => {
         </Tooltip>
       </Group>
 
-      {!isLoading && debouncedSearchTerm.length >= 3 && (
+      {!isSearching && debouncedSearchTerm.length >= 3 && (
         <>
           {displayResults.length === 0 && (
             <Text c="dimmed" size="sm">

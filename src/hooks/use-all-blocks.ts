@@ -19,7 +19,7 @@ export const useAllBlocks = () => {
 
       if (res) setAllBlocks(res.flat())
     } catch (e) {
-      console.error('[BetterSearch] Indexing failed:', e)
+      console.error('BetterSearch: Indexing failed:', e)
     } finally {
       const endTime = performance.now()
 
