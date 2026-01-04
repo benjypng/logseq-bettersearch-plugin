@@ -1,7 +1,7 @@
 # logseq-searchreplace-plugin
 ![Version](https://img.shields.io/github/v/release/benjypng/logseq-searchreplace-plugin?style=flat-square&color=0969da) ![Downloads](https://img.shields.io/github/downloads/benjypng/logseq-searchreplace-plugin/total?style=flat-square&color=orange) ![License](https://img.shields.io/github/license/benjypng/logseq-searchreplace-plugin?style=flat-square)
 
-> A powerful, sidecar-style fuzzy search and replace utility for Logseq.
+> A powerful, sidecar-style, fuzzy search and replace utility for Logseq.
 
 ---
 
