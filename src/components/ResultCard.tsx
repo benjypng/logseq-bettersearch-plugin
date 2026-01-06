@@ -4,11 +4,14 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { ResultCardProps, ResultsEntity } from '../interfaces'
 
 export const ResultCard = ({ result, setResults }: ResultCardProps) => {
-  const { control } = useFormContext()
+  const { control, setError } = useFormContext()
 
   const onReplace = async (result: ResultsEntity, replaceTerm: string) => {
     if (replaceTerm === '') {
-      logseq.UI.showMsg('Enter a replace term', 'error')
+      setError('replaceTerm', {
+        type: 'manual',
+        message: 'Enter replacement text',
+      })
       return
     }
     const newContent = result.fullTitle.replace(result.fullTitle, replaceTerm)

@@ -40,11 +40,12 @@ export const FormFields = () => {
       <Controller
         name="replaceTerm"
         control={control}
-        render={({ field }) => (
+        render={({ field, fieldState: { error } }) => (
           <TextInput
             label="Replace with"
             placeholder="Replacement text..."
             {...field}
+            error={error?.message}
           />
         )}
       />
