@@ -7,8 +7,7 @@ export const useWorkerSearch = (allBlocks: ResultsEntity[]) => {
   const [isReady, setIsReady] = useState(false)
   const [results, setResults] = useState<ResultsEntity[]>([])
   const [isSearching, setIsSearching] = useState(false)
-
-  const startTime = performance.now()
+  const [startTime, setStartTime] = useState<number>(0)
 
   useEffect(() => {
     workerRef.current = new Worker(
@@ -29,7 +28,6 @@ export const useWorkerSearch = (allBlocks: ResultsEntity[]) => {
           new Date().toISOString(),
           'background:#2b6cb0;color:#fff;padding:2px 6px;border-radius:4px;font-weight:600;',
         )
-        logseq.UI.showMsg('logseq-bettersearch-plugin loaded', 'success')
       }
       if (type === 'SEARCH_RESULTS') {
         setResults(payload)
@@ -44,7 +42,7 @@ export const useWorkerSearch = (allBlocks: ResultsEntity[]) => {
   useEffect(() => {
     if (!workerRef.current || allBlocks.length === 0) return
     console.info('BetterSearch worker: Sending data...')
-
+    setStartTime(performance.now())
     workerRef.current.postMessage({
       type: 'INIT_INDEX',
       payload: allBlocks,

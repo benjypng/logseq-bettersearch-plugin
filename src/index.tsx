@@ -7,6 +7,11 @@ import { SearchReplaceContainer } from './components/SearchReplaceContainer'
 import { settings } from './settings'
 
 const main = async () => {
+  setTimeout(
+    () => logseq.UI.showMsg('logseq-bettersearch-plugin loaded', 'success'),
+    5000,
+  )
+
   const el = document.getElementById('app')
   if (!el) return
   const root = createRoot(el)
