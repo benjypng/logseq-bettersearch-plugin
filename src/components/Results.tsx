@@ -108,6 +108,16 @@ export const Results = ({
     }
   }, [currentPageTitle])
 
+  const createPage = async () => {
+    await logseq.Editor.createPage(
+      searchTerm,
+      {},
+      {
+        redirect: true,
+      },
+    )
+  }
+
   return (
     <Stack gap="xs">
       <Group justify="space-between">
@@ -140,9 +150,19 @@ export const Results = ({
       {!isSearching && debouncedSearchTerm.length >= 3 && (
         <>
           {displayResults.length === 0 && (
-            <Text c="dimmed" size="sm">
-              No matches found.
-            </Text>
+            <>
+              <Text c="dimmed" size="sm">
+                No matches found.
+              </Text>
+              <Button
+                size="xs"
+                variant={'default'}
+                color={'blue'}
+                onClick={createPage}
+              >
+                Create Page
+              </Button>
+            </>
           )}
           {displayResults.length > 0 && (
             <Text c="dimmed" size="sm">
