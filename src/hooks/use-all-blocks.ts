@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { ResultsEntity } from '../interfaces' // Adjust path as needed
+import { ResultsEntity } from '../interfaces'
 
 export const useAllBlocks = () => {
   const [allBlocks, setAllBlocks] = useState<ResultsEntity[]>([])
