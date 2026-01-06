@@ -12,34 +12,22 @@ import { IconFileText } from '@tabler/icons-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { useAllBlocks, useWorkerSearch } from '../hooks'
-import { FormValues, ResultsEntity } from '../interfaces'
+import { FormValues, ResultsEntity, ResultsProps } from '../interfaces'
 import { getFirstWord } from '../utils'
 import { ResultCard, SortButton } from '.'
 
-export const Results = () => {
-  const { allBlocks } = useAllBlocks()
-
-  const {
-    search,
-    results: workerResults,
-    isSearching,
-  } = useWorkerSearch(allBlocks)
-
-  const [localResults, setLocalResults] = useState<ResultsEntity[]>([])
+export const Results = ({
+  search,
+  isSearching,
+  workerResults,
+}: ResultsProps) => {
   const [currentPageTitle, setCurrentPageTitle] = useState<string | null>(null)
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+  const [localResults, setLocalResults] = useState<ResultsEntity[]>([])
 
   const { watch } = useFormContext<FormValues>()
   const searchTerm = watch('searchTerm')
   const sortBy = watch('sortBy')
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm)
-    }, 300)
-    return () => clearTimeout(handler)
-  }, [searchTerm])
 
   useEffect(() => {
     if (debouncedSearchTerm.length >= 3) {
@@ -47,11 +35,29 @@ export const Results = () => {
     } else {
       setLocalResults([])
     }
+
+    const onVisibleChanged = ({ visible }: { visible: boolean }) => {
+      if (visible && debouncedSearchTerm.length >= 3) {
+        search(debouncedSearchTerm)
+      }
+    }
+    logseq.on('ui:visible:changed', onVisibleChanged)
+    return () => {
+      logseq.off('ui:visible:changed', onVisibleChanged)
+    }
   }, [debouncedSearchTerm, search])
 
   useEffect(() => {
     setLocalResults(workerResults)
   }, [workerResults])
+
+  useEffect(() => {
+    // Debounce search term
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 300)
+    return () => clearTimeout(handler)
+  }, [searchTerm])
 
   const displayResults = useMemo(() => {
     if (!localResults.length) return []
@@ -61,7 +67,7 @@ export const Results = () => {
         if (currentPageTitle) {
           return result.page.title === currentPageTitle
         } else {
-          return true
+          return result
         }
       })
       .sort((a, b) => {
@@ -72,13 +78,13 @@ export const Results = () => {
             return (b['created-at'] || 0) - (a['created-at'] || 0)
           case 'page-title':
             return getFirstWord(a.page?.title || '').localeCompare(
-              getFirstWord(b.page?.title || ''),
+              getFirstWord(b.page.title || ''),
             )
           case 'block-content':
             return getFirstWord(a.title || '').localeCompare(
               getFirstWord(b.title || ''),
             )
-          default: // 'recommended' - preserves the Fuse.js relevance score order
+          default:
             return 0
         }
       })

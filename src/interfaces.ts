@@ -24,6 +24,12 @@ export interface ResultsEntity {
   uuid: string
 }
 
+export interface ResultsProps {
+  search: (term: string) => void
+  isSearching: boolean
+  workerResults: ResultsEntity[]
+}
+
 export interface ResultCardProps {
   result: ResultsEntity
   setResults: Dispatch<SetStateAction<ResultsEntity[]>>
