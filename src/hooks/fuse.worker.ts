@@ -1,34 +1,44 @@
-import Fuse from 'fuse.js'
+import MiniSearch from 'minisearch'
 
-import { ResultsEntity } from '../interfaces'
-
-let fuse: Fuse<ResultsEntity> | null = null
+let miniSearch: MiniSearch | null = null
 
 self.onmessage = (e: MessageEvent) => {
   const { type, payload } = e.data
 
   switch (type) {
     case 'INIT_INDEX': {
-      fuse = new Fuse(payload, {
-        keys: [
-          { name: 'title', weight: 2 },
-          { name: 'page.title', weight: 1 },
-        ],
-        threshold: 0.2,
-        useExtendedSearch: true,
-        ignoreLocation: true,
-        ignoreFieldNorm: true,
+      miniSearch = new MiniSearch({
+        idField: 'uuid',
+        fields: ['full-title', 'page.title'],
+        storeFields: ['uuid', 'full-title', 'page'],
+        searchOptions: {
+          boost: { title: 2 },
+          fuzzy: 0.2,
+          prefix: true,
+        },
       })
+
+      miniSearch.addAll(payload)
+
       postMessage({ type: 'INDEX_READY' })
       break
     }
     case 'SEARCH': {
-      if (!fuse) return
-      const { term, limit } = payload
-      const results = fuse.search(term, { limit: limit || 50 })
+      if (!miniSearch) return
+      const { term, limit = 50 } = payload
+
+      const results = miniSearch.search(term)
+
+      const items = results.slice(0, limit).map((r) => ({
+        uuid: r.uuid,
+        title: r.title,
+        ['full-title']: r['full-title'],
+        page: r.page,
+      }))
+
       postMessage({
         type: 'SEARCH_RESULTS',
-        payload: results.map((r) => r.item),
+        payload: items,
       })
       break
     }

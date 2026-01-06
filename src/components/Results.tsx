@@ -104,18 +104,6 @@ export const Results = () => {
 
   return (
     <Stack gap="xs">
-      {isSearching && (
-        <Center p="xl">
-          <Stack>
-            <Loader size="sm" />
-            <Text size="sm">
-              Searching takes longer if you have long blocks (more than 500
-              words per block)
-            </Text>
-          </Stack>
-        </Center>
-      )}
-
       <Group justify="space-between">
         <SortButton disabled={displayResults.length === 0} />
         <Tooltip label="Click again to reset" disabled={!currentPageTitle}>
@@ -130,6 +118,18 @@ export const Results = () => {
           </Button>
         </Tooltip>
       </Group>
+
+      {isSearching && (
+        <Center p="xl">
+          <Stack>
+            <Loader size="sm" />
+            <Text size="sm">
+              Searching takes longer if you have long blocks (more than 500
+              words per block)
+            </Text>
+          </Stack>
+        </Center>
+      )}
 
       {!isSearching && debouncedSearchTerm.length >= 3 && (
         <>

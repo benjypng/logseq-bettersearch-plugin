@@ -16,7 +16,6 @@ export const useAllBlocks = () => {
 
     try {
       const res = await logseq.DB.datascriptQuery(query)
-
       if (res) setAllBlocks(res.flat())
     } catch (e) {
       console.error('BetterSearch: Indexing failed:', e)
