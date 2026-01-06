@@ -7,7 +7,8 @@ export const useWorkerSearch = (allBlocks: ResultsEntity[]) => {
   const [isReady, setIsReady] = useState(false)
   const [results, setResults] = useState<ResultsEntity[]>([])
   const [isSearching, setIsSearching] = useState(false)
-  const [startTime, setStartTime] = useState<number>(0)
+
+  const startTimeRef = useRef<number>(0)
 
   useEffect(() => {
     workerRef.current = new Worker(
@@ -20,13 +21,8 @@ export const useWorkerSearch = (allBlocks: ResultsEntity[]) => {
       const { type, payload } = e.data
       if (type === 'INDEX_READY') {
         setIsReady(true)
-        const endTime = performance.now()
-        console.info('BetterSearch worker: Index built.')
         console.info(
-          `%c%s %c[BetterSearch] Indexing took ${(endTime - startTime).toFixed(2)}ms`,
-          'background:#000;color:#fff;padding:2px 6px;border-radius:4px;font-weight:600;',
-          new Date().toISOString(),
-          'background:#2b6cb0;color:#fff;padding:2px 6px;border-radius:4px;font-weight:600;',
+          `${new Date().toISOString()} BetterSearch worker: Index built in ${(performance.now() - startTimeRef.current) / 1000} seconds.`,
         )
       }
       if (type === 'SEARCH_RESULTS') {
@@ -41,8 +37,11 @@ export const useWorkerSearch = (allBlocks: ResultsEntity[]) => {
 
   useEffect(() => {
     if (!workerRef.current || allBlocks.length === 0) return
-    console.info('BetterSearch worker: Sending data...')
-    setStartTime(performance.now())
+    setIsReady(false)
+    startTimeRef.current = performance.now()
+    console.info(
+      `${new Date().toISOString()} BetterSearch worker: Sending data...`,
+    )
     workerRef.current.postMessage({
       type: 'INIT_INDEX',
       payload: allBlocks,
