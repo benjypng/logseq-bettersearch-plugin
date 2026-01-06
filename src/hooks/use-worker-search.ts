@@ -22,7 +22,7 @@ export const useWorkerSearch = (allBlocks: ResultsEntity[]) => {
       if (type === 'INDEX_READY') {
         setIsReady(true)
         console.info(
-          `${new Date().toISOString()} BetterSearch worker: Index built in ${(performance.now() - startTimeRef.current) / 1000} seconds.`,
+          `${new Date().toISOString()} BetterSearch worker: Index built in ${((performance.now() - startTimeRef.current) / 1000).toFixed(4)} seconds.`,
         )
       }
       if (type === 'SEARCH_RESULTS') {
