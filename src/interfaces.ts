@@ -15,12 +15,13 @@ export interface FormValues {
 }
 
 export interface ResultsEntity {
-  content: string
-  ['created-at']: number
-  ['full-title']: string
-  page: { title: string }
-  title: string
-  ['updated-at']: number
+  createdAt: number
+  updatedAt: number
+  fullTitle: string
+  id: string
+  pageTitle: string
+  queryTerms: string[]
+  score: number
   uuid: string
 }
 

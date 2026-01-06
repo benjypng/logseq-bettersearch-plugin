@@ -4,25 +4,24 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { ResultCardProps, ResultsEntity } from '../interfaces'
 
 export const ResultCard = ({ result, setResults }: ResultCardProps) => {
-  const { control, watch } = useFormContext()
-  const searchTerm = watch('searchTerm')
+  const { control } = useFormContext()
 
   const onReplace = async (result: ResultsEntity, replaceTerm: string) => {
     if (replaceTerm === '') {
       logseq.UI.showMsg('Enter a replace term', 'error')
       return
     }
-    const newContent = result.title.replace(searchTerm, replaceTerm)
+    const newContent = result.fullTitle.replace(result.fullTitle, replaceTerm)
     await logseq.Editor.updateBlock(result.uuid, newContent)
     setResults((prev) => prev.filter((b) => b.uuid !== result.uuid))
   }
 
   const goToResult = async (result: ResultsEntity) => {
-    const pageName = result?.page?.title
+    const pageName = result.pageTitle
     if (pageName && result.uuid) {
       logseq.Editor.scrollToBlockInPage(pageName, result.uuid)
     } else {
-      logseq.App.pushState('page', { name: result.title })
+      logseq.App.pushState('page', { name: result.pageTitle })
     }
   }
 
@@ -35,12 +34,18 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
               {result.uuid}
             </Text>
             <Text size="sm" lineClamp={3}>
-              {result['full-title']}
+              {result.fullTitle}
             </Text>
             <Text size="xs" c="dimmed" mt={4}>
-              {result.page?.title
-                ? `Page: ${result.page?.title}`
+              {result.pageTitle
+                ? `Page: ${result.pageTitle}`
                 : `This is a Page`}
+            </Text>
+            <Text size="xs" c="dimmed" mt={4}>
+              Score: {result.score.toFixed(2)}
+            </Text>
+            <Text size="xs" c="dimmed" mt={4}>
+              Matched: {result.queryTerms.join(', ')}
             </Text>
           </Box>
         </Group>

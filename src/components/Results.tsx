@@ -65,7 +65,7 @@ export const Results = ({
     return [...localResults]
       .filter((result) => {
         if (currentPageTitle) {
-          return result.page.title === currentPageTitle
+          return result.pageTitle === currentPageTitle
         } else {
           return result
         }
@@ -73,16 +73,16 @@ export const Results = ({
       .sort((a, b) => {
         switch (sortBy) {
           case 'updated-at':
-            return (b['updated-at'] || 0) - (a['updated-at'] || 0)
+            return (b.updatedAt || 0) - (a.updatedAt || 0)
           case 'created-at':
-            return (b['created-at'] || 0) - (a['created-at'] || 0)
+            return (b.createdAt || 0) - (a.createdAt || 0)
           case 'page-title':
-            return getFirstWord(a.page?.title || '').localeCompare(
-              getFirstWord(b.page.title || ''),
+            return getFirstWord(a.pageTitle || '').localeCompare(
+              getFirstWord(b.pageTitle || ''),
             )
           case 'block-content':
-            return getFirstWord(a.title || '').localeCompare(
-              getFirstWord(b.title || ''),
+            return getFirstWord(a.fullTitle || '').localeCompare(
+              getFirstWord(b.fullTitle || ''),
             )
           default:
             return 0
