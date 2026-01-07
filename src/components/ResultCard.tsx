@@ -37,8 +37,8 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
               <Text size="xs" c="dimmed" ff="monospace" lh={1}>
                 {result.uuid}
               </Text>
-              <Badge size="xs" variant="dot" color="gray">
-                {result.score.toFixed(2)}
+              <Badge size="xs" color="gray" radius="sm">
+                {result.pageTitle || 'Page'}
               </Badge>
             </Group>
 
@@ -48,7 +48,7 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
 
             <Group gap={6} mt={6}>
               <Text size="xs" c="dimmed">
-                {result.pageTitle || 'Page'}
+                {result.score.toFixed(2)}
               </Text>
               <Text size="xs" c="dimmed">
                 •

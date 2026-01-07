@@ -120,31 +120,23 @@ export const Results = ({
 
   return (
     <Stack gap="xs">
-      <Group justify="space-between">
-        <SortButton disabled={displayResults.length === 0} />
-        <Tooltip label="Click again to reset" disabled={!currentPageTitle}>
-          <Button
-            disabled={localResults.length === 0}
-            size="xs"
-            variant={currentPageTitle ? 'light' : 'default'}
-            color="blue"
-            onClick={onlyCurrentPage}
-          >
-            <IconFileText style={{ width: rem(14), height: rem(14) }} />
-          </Button>
-        </Tooltip>
+      <Group w="100%">
+        {isSearching && <Loader size="xs" type="dots" />}
+        <Group ml="auto" gap="xs">
+          <SortButton disabled={displayResults.length === 0} />
+          <Tooltip label="Click again to reset" disabled={!currentPageTitle}>
+            <Button
+              disabled={localResults.length === 0}
+              size="xs"
+              variant={currentPageTitle ? 'light' : 'default'}
+              color="blue"
+              onClick={onlyCurrentPage}
+            >
+              <IconFileText style={{ width: rem(14), height: rem(14) }} />
+            </Button>
+          </Tooltip>
+        </Group>
       </Group>
-
-      {isSearching && (
-        <Center p="xl">
-          <Stack align="center" gap={4}>
-            <Loader size="sm" type="dots" />
-            <Text size="xs" c="dimmed" ta="center">
-              Searching large blocks...
-            </Text>
-          </Stack>
-        </Center>
-      )}
 
       {!isSearching && debouncedSearchTerm.length >= 3 && (
         <>
