@@ -17,7 +17,7 @@ export const TitleHeader = () => {
           size="sm"
           variant="subtle"
           color="gray"
-          onClick={logseq.toggleMainUI}
+          onClick={() => logseq.hideMainUI()}
         />
       </Tooltip>
     </Group>
