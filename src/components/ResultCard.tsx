@@ -1,4 +1,14 @@
-import { Badge, Box, Button, Group, Paper, Stack, Text } from '@mantine/core'
+import {
+  Badge,
+  Box,
+  Button,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  Tooltip,
+} from '@mantine/core'
+import { MouseEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { ResultCardProps, ResultsEntity } from '../interfaces'
@@ -19,12 +29,19 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
     setResults((prev) => prev.filter((b) => b.uuid !== result.uuid))
   }
 
-  const goToResult = async (result: ResultsEntity) => {
+  const goToResult = async (result: ResultsEntity, e: MouseEvent) => {
+    e.stopPropagation()
+
+    if (e.metaKey || e.ctrlKey) {
+      logseq.Editor.openInRightSidebar(result.uuid)
+      return
+    }
+
     const pageName = result.pageTitle
     if (pageName && result.uuid) {
       logseq.Editor.scrollToBlockInPage(pageName, result.uuid)
     } else {
-      logseq.App.pushState('page', { name: result.pageTitle })
+      logseq.App.pushState('page', { name: result.fullTitle })
     }
   }
 
@@ -61,13 +78,15 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
         </Group>
 
         <Group grow>
-          <Button
-            size="xs"
-            variant="default"
-            onClick={() => goToResult(result)}
-          >
-            Go to Block
-          </Button>
+          <Tooltip label="Ctrl/Cmd+click to open in sidebar">
+            <Button
+              size="xs"
+              variant="default"
+              onClick={(e: MouseEvent) => goToResult(result, e)}
+            >
+              Go to Block
+            </Button>
+          </Tooltip>
           <Controller
             name="replaceTerm"
             control={control}
