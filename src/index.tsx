@@ -1,6 +1,7 @@
 import '@mantine/core/styles.css'
 import '@logseq/libs'
 
+import { MantineProvider } from '@mantine/core'
 import { createRoot } from 'react-dom/client'
 
 import { SearchReplaceContainer } from './components/SearchReplaceContainer'
@@ -16,7 +17,11 @@ const main = async () => {
   if (!el) return
   const root = createRoot(el)
 
-  root.render(<SearchReplaceContainer />)
+  root.render(
+    <MantineProvider>
+      <SearchReplaceContainer />
+    </MantineProvider>,
+  )
 
   logseq.App.registerCommandPalette(
     {

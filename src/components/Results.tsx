@@ -127,7 +127,7 @@ export const Results = ({
             disabled={localResults.length === 0}
             size="xs"
             variant={currentPageTitle ? 'light' : 'default'}
-            color={currentPageTitle ? 'blue' : 'gray'}
+            color="blue"
             onClick={onlyCurrentPage}
           >
             <IconFileText style={{ width: rem(14), height: rem(14) }} />
@@ -137,11 +137,10 @@ export const Results = ({
 
       {isSearching && (
         <Center p="xl">
-          <Stack>
-            <Loader size="sm" />
-            <Text size="sm">
-              Searching takes longer if you have long blocks (more than 500
-              words per block)
+          <Stack align="center" gap={4}>
+            <Loader size="sm" type="dots" />
+            <Text size="xs" c="dimmed" ta="center">
+              Searching large blocks...
             </Text>
           </Stack>
         </Center>
@@ -150,23 +149,18 @@ export const Results = ({
       {!isSearching && debouncedSearchTerm.length >= 3 && (
         <>
           {displayResults.length === 0 && (
-            <>
+            <Stack align="center" py="lg">
               <Text c="dimmed" size="sm">
                 No matches found.
               </Text>
-              <Button
-                size="xs"
-                variant={'default'}
-                color={'blue'}
-                onClick={createPage}
-              >
+              <Button size="xs" variant="light" onClick={createPage}>
                 Create Page
               </Button>
-            </>
+            </Stack>
           )}
           {displayResults.length > 0 && (
-            <Text c="dimmed" size="sm">
-              {displayResults.length} matches found.
+            <Text c="dimmed" size="xs" fw={700} tt="uppercase">
+              {displayResults.length} matches found
             </Text>
           )}
         </>

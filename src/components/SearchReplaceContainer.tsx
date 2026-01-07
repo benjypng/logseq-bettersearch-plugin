@@ -1,5 +1,5 @@
-import { Flex, MantineProvider } from '@mantine/core'
-import { useEffect, useState } from 'react'
+import { Flex, Paper, useMantineColorScheme } from '@mantine/core'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { useAllBlocks, useWorkerSearch } from '../hooks'
@@ -18,19 +18,13 @@ export const SearchReplaceContainer = () => {
     defaultValues: { searchTerm: '', replaceTerm: '' },
   })
 
-  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light')
+  const { colorScheme, setColorScheme } = useMantineColorScheme()
 
   useEffect(() => {
-    // Handle theme change
-    logseq.App.getUserConfigs().then((config) => {
-      setThemeMode(config.preferredThemeMode as 'light' | 'dark')
-    })
     const cleanup = logseq.App.onThemeModeChanged(({ mode }) => {
-      setThemeMode(mode)
+      setColorScheme(mode)
     })
-    return () => {
-      cleanup()
-    }
+    return () => cleanup()
   }, [])
 
   useEffect(() => {
@@ -54,24 +48,19 @@ export const SearchReplaceContainer = () => {
   }, [])
 
   return (
-    <MantineProvider>
-      <FormProvider {...formMethods}>
-        <Flex
-          p="md"
-          pt="2.5rem"
-          w="100%"
-          h="100vh"
-          mih="100vh"
-          direction="column"
-          bg={themeMode === 'dark' ? '#1f2937' : '#e5e7eb'}
-          c={themeMode === 'dark' ? '#9ca3af' : '#4b5563'}
-          bdrs={'5px solid red'}
-          style={{
-            boxShadow:
-              themeMode === 'dark' ? 'none' : '4px 0 8px -2px rgba(0,0,0,0.1)',
-            overflowY: 'auto',
-          }}
-        >
+    <FormProvider {...formMethods}>
+      <Paper
+        p="md"
+        w="100%"
+        h="100vh"
+        mih="100vh"
+        radius={0}
+        bg="body"
+        c="text"
+        shadow={colorScheme === 'dark' ? 'none' : 'xl'}
+        style={{ overflowY: 'auto' }}
+      >
+        <Flex direction="column" gap="xs">
           <TitleHeader />
           <FormFields />
           <Results
@@ -80,7 +69,7 @@ export const SearchReplaceContainer = () => {
             workerResults={workerResults}
           />
         </Flex>
-      </FormProvider>
-    </MantineProvider>
+      </Paper>
+    </FormProvider>
   )
 }

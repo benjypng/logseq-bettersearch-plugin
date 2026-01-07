@@ -23,7 +23,7 @@ export const FormFields = () => {
   }, [setFocus])
 
   return (
-    <Stack mb="xl">
+    <Stack mb="xs">
       <Controller
         name="searchTerm"
         control={control}

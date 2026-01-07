@@ -1,4 +1,4 @@
-import { Box, Button, Group, Paper, Stack, Text } from '@mantine/core'
+import { Badge, Box, Button, Group, Paper, Stack, Text } from '@mantine/core'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { ResultCardProps, ResultsEntity } from '../interfaces'
@@ -29,27 +29,34 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
   }
 
   return (
-    <Paper withBorder p="sm" shadow="xs">
-      <Stack gap="xs">
-        <Group justify="space-between" align="start">
-          <Box style={{ flex: 1 }}>
-            <Text size="xs" c="dimmed" ff="monospace">
-              {result.uuid}
-            </Text>
-            <Text size="sm" lineClamp={3}>
+    <Paper withBorder p="sm" shadow="sm" radius="md">
+      <Stack gap="sm">
+        <Group justify="space-between" align="start" wrap="nowrap">
+          <Box flex={1}>
+            <Group gap="xs" mb={4}>
+              <Text size="xs" c="dimmed" ff="monospace" lh={1}>
+                {result.uuid}
+              </Text>
+              <Badge size="xs" variant="dot" color="gray">
+                {result.score.toFixed(2)}
+              </Badge>
+            </Group>
+
+            <Text size="sm" lineClamp={3} fw={500}>
               {result.fullTitle}
             </Text>
-            <Text size="xs" c="dimmed" mt={4}>
-              {result.pageTitle
-                ? `Page: ${result.pageTitle}`
-                : `This is a Page`}
-            </Text>
-            <Text size="xs" c="dimmed" mt={4}>
-              Score: {result.score.toFixed(2)}
-            </Text>
-            <Text size="xs" c="dimmed" mt={4}>
-              Matched: {result.queryTerms.join(', ')}
-            </Text>
+
+            <Group gap={6} mt={6}>
+              <Text size="xs" c="dimmed">
+                {result.pageTitle || 'Page'}
+              </Text>
+              <Text size="xs" c="dimmed">
+                •
+              </Text>
+              <Text size="xs" c="dimmed" lineClamp={1}>
+                Match: {result.queryTerms.join(', ')}
+              </Text>
+            </Group>
           </Box>
         </Group>
 
