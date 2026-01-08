@@ -25,7 +25,10 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
       })
       return
     }
-    const newContent = result.fullTitle.replace(result.fullTitle, replaceTerm)
+    const newContent = result.fullTitle.replace(
+      result.terms.join(' '),
+      replaceTerm,
+    )
     await logseq.Editor.updateBlock(result.uuid, newContent)
     setResults((prev) => prev.filter((b) => b.uuid !== result.uuid))
   }
