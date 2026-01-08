@@ -54,7 +54,7 @@ export const useWorkerSearch = (allBlocks: ResultsEntity[]) => {
       setIsSearching(true)
       workerRef.current.postMessage({
         type: 'SEARCH',
-        payload: { term, limit: 50 },
+        payload: { term, limit: logseq.settings?.maxResults ?? 50 },
       })
     },
     [isReady],

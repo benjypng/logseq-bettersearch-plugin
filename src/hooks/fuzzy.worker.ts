@@ -27,7 +27,7 @@ self.onmessage = (e: MessageEvent) => {
     }
     case 'SEARCH': {
       if (!miniSearch) return
-      const { term, limit = 50 } = payload
+      const { term, limit = logseq.settings?.maxResults ?? 50 } = payload
 
       const results = miniSearch.search(term)
 
