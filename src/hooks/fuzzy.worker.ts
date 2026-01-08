@@ -40,6 +40,7 @@ self.onmessage = (e: MessageEvent) => {
           id: r.uuid,
           pageTitle: r.page?.title ?? null,
           queryTerms: r.queryTerms,
+          terms: r.terms,
           score: r.score,
           uuid: r.uuid,
         }))

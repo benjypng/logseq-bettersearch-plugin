@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Group,
+  Highlight,
   Paper,
   Stack,
   Text,
@@ -60,7 +61,7 @@ export const ResultCard = ({ result, setResults }: ResultCardProps) => {
             </Group>
 
             <Text size="sm" lineClamp={3} fw={500}>
-              {result.fullTitle}
+              <Highlight highlight={result.terms}>{result.fullTitle}</Highlight>
             </Text>
 
             <Group gap={6} mt={6}>

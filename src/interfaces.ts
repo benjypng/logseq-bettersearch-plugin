@@ -21,6 +21,7 @@ export interface ResultsEntity {
   id: string
   pageTitle: string
   queryTerms: string[]
+  terms: string[]
   score: number
   uuid: string
 }
