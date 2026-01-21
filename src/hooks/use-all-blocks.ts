@@ -4,8 +4,10 @@ import { ResultsEntity } from '../interfaces'
 
 export const useAllBlocks = () => {
   const [allBlocks, setAllBlocks] = useState<ResultsEntity[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const fetchBlocks = useCallback(async () => {
+    setIsLoading(true)
     const query = `
       [:find (pull ?b [:block/uuid :block/title :block/created-at :block/updated-at {:block/page [:block/title]}])
       :where
@@ -17,11 +19,14 @@ export const useAllBlocks = () => {
       if (res) setAllBlocks(res.flat())
     } catch (e) {
       console.error('BetterSearch: Indexing failed:', e)
+    } finally {
+      setIsLoading(false)
     }
   }, [])
 
   useEffect(() => {
     fetchBlocks()
+
     let timeoutId: ReturnType<typeof setTimeout>
     const unsubscribe = logseq.DB.onChanged(() => {
       clearTimeout(timeoutId)
@@ -30,11 +35,15 @@ export const useAllBlocks = () => {
       }, 5000)
     })
 
+    //Snippet to handle when Logseq first starts
+    logseq.on('ui:visible:changed', fetchBlocks)
+
     return () => {
+      logseq.off('ui:visible:changed', fetchBlocks)
       unsubscribe()
       clearTimeout(timeoutId)
     }
   }, [fetchBlocks])
 
-  return { allBlocks }
+  return { allBlocks, isLoading }
 }

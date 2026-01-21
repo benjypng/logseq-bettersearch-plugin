@@ -7,7 +7,7 @@ import { FormValues } from '../interfaces'
 import { FormFields, Results, TitleHeader } from '.'
 
 export const SearchReplaceContainer = () => {
-  const { allBlocks } = useAllBlocks()
+  const { allBlocks, isLoading } = useAllBlocks()
   const {
     search,
     results: workerResults,
@@ -48,28 +48,30 @@ export const SearchReplaceContainer = () => {
   }, [])
 
   return (
-    <FormProvider {...formMethods}>
-      <Paper
-        p="md"
-        w="100%"
-        h="100vh"
-        mih="100vh"
-        radius={0}
-        bg="body"
-        c="text"
-        shadow={colorScheme === 'dark' ? 'none' : 'xl'}
-        style={{ overflowY: 'auto' }}
-      >
-        <Flex direction="column" gap="xs">
-          <TitleHeader />
-          <FormFields />
-          <Results
-            search={search}
-            isSearching={isSearching}
-            workerResults={workerResults}
-          />
-        </Flex>
-      </Paper>
-    </FormProvider>
+    !isLoading && (
+      <FormProvider {...formMethods}>
+        <Paper
+          p="md"
+          w="100%"
+          h="100vh"
+          mih="100vh"
+          radius={0}
+          bg="body"
+          c="text"
+          shadow={colorScheme === 'dark' ? 'none' : 'xl'}
+          style={{ overflowY: 'auto' }}
+        >
+          <Flex direction="column" gap="xs">
+            <TitleHeader />
+            <FormFields />
+            <Results
+              search={search}
+              isSearching={isSearching}
+              workerResults={workerResults}
+            />
+          </Flex>
+        </Paper>
+      </FormProvider>
+    )
   )
 }
